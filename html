@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .container {
+      border: 1px solid #080202;
+      padding: 10px;
+      width: 200px;
+      height: 300px;
+    }
+    
+    .item {
+      border: 1px solid #b52e2e;
+      background-color: #c7bcbc;
+      padding: 5px;
+      margin-bottom: 5px;
+      cursor: move;
+    }
+    
+    .success-message {
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="container1">
+    <div class="item" draggable="true">Item 1</div>
+    <div class="item" draggable="true">Item 2</div>
+    <div class="item" draggable="true">Item 3</div>
+    <div class="item" draggable="true">Item 4</div>
+  </div>
+  
+  <div class="container" id="container2"></div>
+  
+  <p id="message"></p>
+  
+  <button id="resetBtn">Reset</button>
+
+  <script>
+    var draggedItem = null;
+    
+    // Event listener for when the drag starts
+    document.addEventListener("dragstart", function(event) {
+      draggedItem = event.target;
+      event.dataTransfer.setData("text/plain", event.target.textContent);
+      event.target.style.opacity = "0.4";
+    });
+    
+    // Event listener for when the drag ends
+    document.addEventListener("dragend", function(event) {
+      event.target.style.opacity = "1";
+    });
+    
+    // Event listener for when an item is dropped
+    document.addEventListener("drop", function(event) {
+      event.preventDefault();
+      
+      if (event.target.classList.contains("container")) {
+        var data = event.dataTransfer.getData("text/plain");
+        event.target.appendChild(document.createTextNode(data));
+        
+        // Reset the draggedItem variable
+        draggedItem = null;
+        
+        // Display success message
+        var message = document.getElementById("message");
+        message.textContent = "Item dropped successfully!";
+        message.classList.add("success-message");
+      }
+    });
+    
+    // Event listener for when an item is dragged over a container
+    document.addEventListener("dragover", function(event) {
+      event.preventDefault();
+      
+      if (event.target.classList.contains("container")) {
+        event.target.style.border = "2px dashed #aaa";
+      }
+    });
+    
+    // Event listener for when an item is dragged out of a container
+    document.addEventListener("dragleave", function(event) {
+      if (event.target.classList.contains("container")) {
+        event.target.style.border = "1px solid #ccc";
+      }
+    });
+    
+    // Reset button event listener
+    var resetBtn = document.getElementById("resetBtn");
+    resetBtn.addEventListener("click", function() {
+      var container1 = document.getElementById("container1");
+      var container2 = document.getElementById("container2");
+      container2.innerHTML = "";
+      container1.innerHTML = `
+        <div class="item" draggable="true">Item 1</div>
+        <div class="item" draggable="true">Item 2</div>
+        <div class="item" draggable="true">Item 3</div>
+        <div class="item" draggable="true">Item 4</div>
+      `;
+      var message = document.getElementById("message");
+      message.textContent = "";
+      message.classList.remove("success-message");
+    });
+ 
